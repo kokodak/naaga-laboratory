@@ -2,6 +2,8 @@ MySQL with Docker
 
 ```bash
 docker pull mysql
+```
+```bash
 docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=naaga --name mysql mysql
 ```
 
