@@ -1,3 +1,12 @@
+MySQL with Docker
+
+```bash
+docker pull mysql
+docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=1234 -e MYSQL_DATABASE=naaga --name mysql mysql
+```
+
+---
+
 ![제목](etc/images/header.png)
 
 ## 💌 나아가로부터의 초대장이 도착했습니다
