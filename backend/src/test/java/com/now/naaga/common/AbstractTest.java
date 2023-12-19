@@ -1,7 +1,7 @@
 package com.now.naaga.common;
 
 import com.now.naaga.auth.infrastructure.AuthClient;
-import com.now.naaga.auth.persistence.AuthRepository;
+import com.now.naaga.auth.persistence.AuthTokenRepository;
 import com.now.naaga.common.builder.GameBuilder;
 import com.now.naaga.common.builder.GameResultBuilder;
 import com.now.naaga.common.builder.LetterBuilder;
@@ -76,7 +76,7 @@ public abstract class AbstractTest {
     /*------------------------------------------------------------------*/
 
     @Autowired
-    protected AuthRepository authRepository;
+    protected AuthTokenRepository authTokenRepository;
 
     @Autowired
     protected MemberRepository memberRepository;

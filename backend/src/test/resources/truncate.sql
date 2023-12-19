@@ -8,7 +8,6 @@ TRUNCATE TABLE player;
 TRUNCATE TABLE game_result;
 TRUNCATE TABLE game;
 TRUNCATE TABLE hint;
-TRUNCATE TABLE auth_token;
 TRUNCATE TABLE letter;
 TRUNCATE TABLE read_letter_log;
 TRUNCATE TABLE write_letter_log;

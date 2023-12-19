@@ -8,13 +8,14 @@ import com.now.naaga.auth.infrastructure.AuthType;
 import com.now.naaga.auth.infrastructure.MemberAuthMapper;
 import com.now.naaga.auth.infrastructure.dto.MemberAuth;
 import com.now.naaga.member.domain.Member;
+import java.time.LocalDateTime;
 import java.util.Date;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AuthTokenGenerator {
     
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 30; // 30일
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 0L; // 30일
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 30; // 30일
 
     private final JwtProvider jwtProvider;

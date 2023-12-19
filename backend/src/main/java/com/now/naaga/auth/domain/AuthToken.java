@@ -1,53 +1,35 @@
 package com.now.naaga.auth.domain;
 
 import com.now.naaga.member.domain.Member;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import java.util.Objects;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
-@Entity
+@RedisHash(value = "authToken", timeToLive = 60)
 public class AuthToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String refreshToken;
 
     private String accessToken;
 
-    private String refreshToken;
-
-    @JoinColumn(name = "member_id")
-    @ManyToOne
     private Member member;
 
     public AuthToken() {
     }
 
     public AuthToken(final String accessToken, final String refreshToken, final Member member) {
-        this(null, accessToken, refreshToken, member);
-    }
-
-    public AuthToken(final Long id, final String accessToken, final String refreshToken, final Member member) {
-        this.id = id;
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.member = member;
     }
 
-    public Long getId() {
-        return id;
+    public String getRefreshToken() {
+        return refreshToken;
     }
 
     public String getAccessToken() {
         return accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
     }
 
     public Member getMember() {
@@ -56,11 +38,14 @@ public class AuthToken {
 
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final AuthToken that = (AuthToken) o;
-        return Objects.equals(accessToken, that.accessToken)
-                && Objects.equals(refreshToken, that.refreshToken);
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final AuthToken authToken = (AuthToken) o;
+        return Objects.equals(refreshToken, authToken.refreshToken) && Objects.equals(accessToken, authToken.accessToken);
     }
 
     @Override
