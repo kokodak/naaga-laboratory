@@ -2,16 +2,22 @@ package com.now.naaga.auth.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import com.now.naaga.auth.application.dto.AuthCommand;
+import com.now.naaga.auth.application.dto.RefreshTokenCommand;
 import com.now.naaga.auth.domain.AuthToken;
+import com.now.naaga.auth.exception.AuthException;
+import com.now.naaga.auth.exception.AuthExceptionType;
 import com.now.naaga.auth.infrastructure.AuthType;
 import com.now.naaga.auth.infrastructure.dto.AuthInfo;
 import com.now.naaga.auth.infrastructure.dto.MemberAuth;
+import com.now.naaga.auth.infrastructure.jwt.AuthTokenGenerator;
 import com.now.naaga.common.ServiceTest;
+import com.now.naaga.common.exception.BaseExceptionType;
 import com.now.naaga.member.domain.Member;
 import com.now.naaga.player.domain.Player;
 import com.now.naaga.score.domain.Score;
@@ -25,6 +31,9 @@ class AuthServiceTest extends ServiceTest {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private AuthTokenGenerator authTokenGenerator;
 
     @Test
     void 존재하지_않는_멤버는_저장_후_토큰을_발급한다() {
@@ -101,5 +110,22 @@ class AuthServiceTest extends ServiceTest {
             softly.assertThat(memberRepository.findById(player.getMember().getId())).isPresent();
             softly.assertThat(playerRepository.findById(player.getId())).isPresent();
         });
+    }
+
+    @Test
+    void 액세스_토큰이_만료되면_리프레시_토큰을_소모해_새로운_액세스_토큰을_발급받는다() throws InterruptedException {
+        // given
+        final Player player = playerBuilder.init()
+                                           .build();
+
+        final AuthToken authToken = authTokenGenerator.generate(player.getMember(), 1L, AuthType.KAKAO);
+        authTokenRepository.save(authToken);
+        Thread.sleep(5000L);
+
+        // when
+        final AuthToken newAuthToken = authService.refreshLogin(new RefreshTokenCommand(authToken.getRefreshToken()));
+
+        // then
+        assertThat(newAuthToken.getAccessToken()).isNotEqualTo(authToken.getAccessToken());
     }
 }

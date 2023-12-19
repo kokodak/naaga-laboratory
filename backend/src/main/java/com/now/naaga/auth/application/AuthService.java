@@ -10,7 +10,7 @@ import com.now.naaga.auth.infrastructure.AuthClient;
 import com.now.naaga.auth.infrastructure.dto.AuthInfo;
 import com.now.naaga.auth.infrastructure.dto.MemberAuth;
 import com.now.naaga.auth.infrastructure.jwt.AuthTokenGenerator;
-import com.now.naaga.auth.persistence.AuthRepository;
+import com.now.naaga.auth.persistence.AuthTokenRepository;
 import com.now.naaga.member.application.MemberService;
 import com.now.naaga.member.application.dto.CreateMemberCommand;
 import com.now.naaga.member.application.dto.DeleteMemberCommand;
@@ -29,7 +29,7 @@ public class AuthService {
 
     private final MemberService memberService;
 
-    private final AuthRepository authRepository;
+    private final AuthTokenRepository authTokenRepository;
 
     private final AuthClient authClient;
 
@@ -37,12 +37,12 @@ public class AuthService {
 
     public AuthService(final PlayerService playerService,
                        final MemberService memberService,
-                       final AuthRepository authRepository,
+                       final AuthTokenRepository authTokenRepository,
                        final AuthClient authClient,
                        final AuthTokenGenerator authTokenGenerator) {
         this.playerService = playerService;
         this.memberService = memberService;
-        this.authRepository = authRepository;
+        this.authTokenRepository = authTokenRepository;
         this.authClient = authClient;
         this.authTokenGenerator = authTokenGenerator;
     }
@@ -51,7 +51,7 @@ public class AuthService {
         final AuthInfo authInfo = authClient.requestOauthInfo(authCommand.token());
         final Member member = findOrCreateMember(authInfo);
         final AuthToken generatedAuthToken = authTokenGenerator.generate(member, authInfo.getId(), authCommand.type());
-        return authRepository.save(generatedAuthToken);
+        return authTokenRepository.save(generatedAuthToken);
     }
 
     private Member findOrCreateMember(final AuthInfo kakaoAuthInfo) {
@@ -74,17 +74,17 @@ public class AuthService {
     @Transactional(noRollbackFor = AuthException.class)
     public AuthToken refreshLogin(final RefreshTokenCommand refreshTokenCommand) {
         final String refreshToken = refreshTokenCommand.refreshToken();
-        final AuthToken oldAuthToken = authRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new AuthException(INVALID_TOKEN));
-        authRepository.delete(oldAuthToken);
+        final AuthToken oldAuthToken = authTokenRepository.findById(refreshToken)
+                                                          .orElseThrow(() -> new AuthException(INVALID_TOKEN));
+        authTokenRepository.delete(oldAuthToken);
         final AuthToken newAuthToken = authTokenGenerator.refresh(oldAuthToken);
-        return authRepository.save(newAuthToken);
+        return authTokenRepository.save(newAuthToken);
     }
 
     public void deleteAccount(final MemberAuth memberAuth) {
         final Long memberId = memberAuth.getMemberId();
         final Long authId = memberAuth.getAuthId();
-        authRepository.deleteByMemberId(memberId);
+        authTokenRepository.deleteByMemberId(memberId);
         authClient.requestUnlink(authId);
         playerService.deleteByMemberId(new DeletePlayerCommand(memberId));
         memberService.deleteByMemberId(new DeleteMemberCommand(memberId));
@@ -93,7 +93,7 @@ public class AuthService {
     public void logout(final MemberAuth memberAuth) {
         final Long memberId = memberAuth.getMemberId();
         final Long authId = memberAuth.getAuthId();
-        authRepository.deleteByMemberId(memberId);
+        authTokenRepository.deleteByMemberId(memberId);
         authClient.requestLogout(authId);
     }
 }

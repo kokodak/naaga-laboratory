@@ -108,7 +108,7 @@ class AuthControllerTest extends ControllerTest {
         final String expiredAccessToken = jwtProvider.generate(convertedString, accessTokenExpiredAt);
         final String validRefreshToken = jwtProvider.generate(convertedString, refreshTokenExpiredAt);
 
-        authRepository.save(new AuthToken(expiredAccessToken, validRefreshToken, player.getMember()));
+        authTokenRepository.save(new AuthToken(expiredAccessToken, validRefreshToken, player.getMember()));
 
         //when
         final ExtractableResponse<Response> extract = RestAssured.given()
@@ -146,7 +146,7 @@ class AuthControllerTest extends ControllerTest {
         final String validAccessToken = jwtProvider.generate(convertedString, accessTokenExpiredAt);
         final String validRefreshToken = jwtProvider.generate(convertedString, refreshTokenExpiredAt);
 
-        authRepository.save(new AuthToken(validAccessToken, validRefreshToken, player.getMember()));
+        authTokenRepository.save(new AuthToken(validAccessToken, validRefreshToken, player.getMember()));
 
         //when
         final ExtractableResponse<Response> extract = RestAssured.given()
@@ -186,7 +186,7 @@ class AuthControllerTest extends ControllerTest {
         final String expiredAccessToken = jwtProvider.generate(player.getMember().getId().toString(), accessTokenExpiredAt);
         final String expiredRefreshToken = jwtProvider.generate(player.getMember().getId().toString(), refreshTokenExpiredAt);
 
-        authRepository.save(new AuthToken(expiredAccessToken, expiredRefreshToken, player.getMember()));
+        authTokenRepository.save(new AuthToken(expiredAccessToken, expiredRefreshToken, player.getMember()));
 
         //when
         final ExtractableResponse<Response> extract = RestAssured.given()
@@ -248,7 +248,7 @@ class AuthControllerTest extends ControllerTest {
         final Player player = playerBuilder.init()
                                            .build();
         final AuthToken authToken = authTokenGenerator.generate(player.getMember(), 1L, AuthType.KAKAO);
-        authRepository.save(authToken);
+        authTokenRepository.save(authToken);
         doNothing().when(authClient).requestUnlink(any());
 
         // when
@@ -274,7 +274,7 @@ class AuthControllerTest extends ControllerTest {
         final Player player = playerBuilder.init()
                                            .build();
         final AuthToken authToken = authTokenGenerator.generate(player.getMember(), 1L, AuthType.KAKAO);
-        authRepository.save(authToken);
+        authTokenRepository.save(authToken);
         doNothing().when(authClient).requestLogout(any());
 
         // when
