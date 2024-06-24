@@ -64,7 +64,7 @@ public class AuthService {
         }
     }
 
-    private Member createMemberAndPlayer(final AuthInfo kakaoAuthInfo, final CreateMemberCommand createMemberCommand) {
+    private Member createMemberAndPlayer(final AuthInfo kakaoAuthInfo,final CreateMemberCommand createMemberCommand) {
         final Member member = memberService.create(createMemberCommand);
         final CreatePlayerCommand createPlayerCommand = new CreatePlayerCommand(kakaoAuthInfo.getNickname(), member);
         playerService.create(createPlayerCommand);
