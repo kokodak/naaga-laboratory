@@ -5,6 +5,12 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+    paths-ignore:
+      - 'api/docs/**'    # api/docs 디렉토리 및 하위 파일들
+      - 'build/charts/**'    # build/charts 디렉토리 및 하위 파일들
+      - '*.md'          # .md 확장자 파일들
+      - '*.txt'         # .txt 확장자 파일들
+      - '.gitignore'    # .gitignore 파일
       
 jobs:
   build_test:
