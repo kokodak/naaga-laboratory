@@ -6,9 +6,10 @@ on:
   pull_request:
     branches: [ main ]
     paths-ignore:
-      - '*.md'          # .md 확장자 파일들
-      - '*.txt'         # .txt 확장자 파일들
-      - '.gitignore'    # .gitignore 파일
+      - 'backend/**'
+      - '**/*.md'          # .md 확장자 파일들
+      - '**/*.txt'         # .txt 확장자 파일들
+      - '**/.gitignore'    # .gitignore 파일
       
 jobs:
   build_test:
