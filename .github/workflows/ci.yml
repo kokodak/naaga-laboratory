@@ -7,6 +7,7 @@ on:
     branches: [ main ]
     paths-ignore:
       - 'backend/**'
+      - '.github/**'
       - '**/*.md'          # .md 확장자 파일들
       - '**/*.txt'         # .txt 확장자 파일들
       - '**/.gitignore'    # .gitignore 파일
