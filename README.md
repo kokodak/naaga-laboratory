@@ -1,4 +1,4 @@
-MySQL with Docker test
+MySQL with Docker
 
 ```bash
 docker pull mysql
